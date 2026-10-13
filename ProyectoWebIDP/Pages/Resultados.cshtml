@@ -1,0 +1,137 @@
+﻿@page
+@model ProyectoWebIDP.Pages.ResultadosModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus Resultados - Equipo Stratos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .grid-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .chart-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .btn-volver {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+            .btn-volver:hover {
+                background: #4f46e5;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Resultados de Evaluación DISC 🧭</h1>
+            <p>Perfil detectado: <strong>@Model.Perfil.LetraPrincipal</strong></p>
+        </div>
+
+        <div class="grid-charts">
+            <div class="chart-box">
+                <h3>Perfil de Liderazgo (DIF)</h3>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <h3>Intensidad por Factor</h3>
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="/" class="btn-volver">Realizar otra evaluación</a>
+        </div>
+    </div>
+
+    <script>
+        // PASAR DATOS DE C# A JAVASCRIPT
+        const datos = {
+            z: @Model.Perfil.ZDif,
+            e: @Model.Perfil.EstrellaDif,
+            c: @Model.Perfil.CuadradoDif,
+            t: @Model.Perfil.TrianguloDif
+        };
+
+        const labels = ['Dominancia (S)', 'Influencia (C)', 'Serenidad (I)', 'Cumplimiento (D)'];
+        const values = [datos.z, datos.e, datos.c, datos.t];
+
+        // RADAR DE LAS GRAFICAS
+        new Chart(document.getElementById('radarChart'), {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tu Perfil',
+                    data: values,
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: '#6366f1',
+                    borderWidth: 2
+                }]
+            },
+            options: { scales: { r: { suggestedMin: -10, suggestedMax: 10 } } }
+        });
+
+        // BARRAS 
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Puntos',
+                    data: values,
+                    backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6']
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
